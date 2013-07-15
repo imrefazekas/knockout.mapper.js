@@ -1,0 +1,57 @@
+<html>
+<head>
+	<script src="../node_modules/knockout/build/output/knockout-latest.js"></script>
+	<script src="../knockout.mapper.js"></script>
+</head>
+<body>
+
+	<p>First name: <strong data-bind="text: firstName"></strong></p>
+	<p>Last name: <strong data-bind="text: lastName"></strong></p>
+
+	<p>First name: <input data-bind="value: firstName" /></p>
+	<p>Last name: <input data-bind="value: lastName" /></p>
+
+	<p>Full name: <strong data-bind="text: fullName"></strong></p>
+
+	<button data-bind="click: capitalizeLastName">Go caps</button>
+
+	<script type="text/javascript">
+		var obj = {};
+		obj.statics = {
+			"prop": "val"
+		};
+		obj.dataModel = {
+			firstName: "Planet",
+			lastName: "Earth",
+			fullName: function() {
+				return this.firstName() + " " + this.lastName();
+			}
+		};
+		obj.methods = {
+			capitalizeLastName: function() {
+				var currentVal = this.lastName();
+				this.lastName(currentVal.toUpperCase());
+			},
+			init: function(){
+				console.log('Helloka!');
+			}
+		};
+		obj.validation = {
+			firstName: { required: true, type: "alphanum" },
+			lastName: { notblank: true, type: "alphanum" }
+		};
+
+
+		var viewModel = {};
+		ko.mapObject( viewModel, obj.dataModel, obj.validation, obj.methods, obj.statics );
+		ko.applyBindings( viewModel );
+
+		setTimeout( function(){
+			obj.dataModel.firstName = "Universe";
+			ko.updateViewModel( viewModel, obj.dataModel );
+
+			console.log( ko.toJSONByPrototype( viewModel, obj.dataModel ) );
+		}, 5000 );
+	</script>
+</body>
+</html>

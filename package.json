@@ -1,0 +1,43 @@
+{
+  "name": "knockout.mapper.js",
+  "version": "0.1.0",
+  "description": "Knockout.js plugin for object mapping including validation.",
+  "homepage": "https://github.com/imrefazekas/knockout.mapper.js",
+  "dependencies": {
+    "knockout": "~2.3.0"
+  },
+  "keywords": [
+    "util",
+    "knockout",
+    "parsley",
+    "validation",
+    "mapping"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/imrefazekas/knockout.mapper.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/imrefazekas/knockout.mapper.js/issues"
+  },
+  "author": {
+    "name": "Imre Fazekas",
+    "email": "imre.fazekas@gmail.com"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT"
+    }
+  ],
+  "main": "knockout.mapper.js",
+  "scripts": {},
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6",
+    "grunt-contrib-uglify": "~0.2"
+  },
+  "readme": "README.md",
+  "readmeFilename": "README.md",
+  "_id": "knockout.mapper.js@0.1.0"
+}
