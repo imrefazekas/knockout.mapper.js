@@ -4,7 +4,7 @@
   "description": "Knockout.js plugin for object mapping including validation.",
   "homepage": "https://github.com/imrefazekas/knockout.mapper.js",
   "dependencies": {
-    "knockout": "~2.3.0"
+    "knockout": "~2.3"
   },
   "keywords": [
     "util",
