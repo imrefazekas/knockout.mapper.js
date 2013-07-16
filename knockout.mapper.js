@@ -130,65 +130,69 @@
 			var self = VM;
 
 			return function(_m, _v, _f, _s){
-				var innerMakeViewModel = function(data, _validation, viewModel, path){
+
+				var _MakeViewModel = function(data, viewModel, validation, context){
 					each( data, function(value, key, list){
-						var name = path + '.' + key;
-						var validation = _validation ? _validation[key] : null;
+						var validationObj = validation ? validation : {};
+
 						if( isArray( value ) ){
 							var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
 							if( isAnObject ){
-								var pname = name + '[]';
-								viewModel[ key ] = [];
-								innerMakeViewModel( value[0], validation, viewModel[ key ][0], pname );
+								viewModel[ key ] = [ {} ];
+								_MakeViewModel( value[0], viewModel[ key ][0], validationObj, context );
 							} else{
-								viewModel[ key ] = validation ? ko.observableArray().extend( validation ) : ko.observableArray();
+								viewModel[ key ] = ko.observableArray();
+								if(validationObj[key]) {
+									viewModel[key].extend(validationObj[key]);
+								}
 								each( value, function(element, index, array){
 									viewModel[ key ].push( element );
 								} );
 							}
 						}
 						else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
-							viewModel[ key ] = validation ? ko.observable( value ).extend( validation ) :  ko.observable( value );
+							viewModel[ key ] = ko.observable( value );
+							if(validationObj[key]) {
+								viewModel[key].extend(validationObj[key]);
+							}
 						}
 						else if( isFunction( value ) ){
-							//viewModel[ key ] = ko.computed( value, viewModel );
+							//viewModel[ key ] = ko.computed( value, context );
 						}
 						else if( isObject( value ) ){
 							viewModel[ key ] = {};
-							innerMakeViewModel( value, validation, viewModel[ key ], name );
+
+							_MakeViewModel( value, viewModel[ key ], validationObj[key], context );
 						}
 					} );
 
 					return viewModel;
 				};
 
-				var innerMakeComputerModel = function(data, viewModel, path){
+				var _MakeComputerModel = function(data, viewModel, context){
 					each( data, function(value, key, list){
-						var name = path + '.' + key;
 						if( isArray( value ) ){
 							var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
 							if( isAnObject ){
-								var pname = name + '[]';
-								innerMakeComputerModel( value[0], viewModel[ key ][0], pname );
+								_MakeComputerModel( value[0], viewModel[ key ][0], context );
 							} else{
 							}
 						}
 						else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
 						}
 						else if( isFunction( value ) ){
-							viewModel[ key ] = ko.computed( value, viewModel );
+							viewModel[ key ] = ko.computed( value, context );
 						}
 						else if( isObject( value ) ){
-							innerMakeComputerModel( value, viewModel[ key ], name );
+							_MakeComputerModel( value, viewModel[ key ], context );
 						}
 					} );
 
 					return viewModel;
 				};
 
-				var innerMakeFunctions = function( _methods, viewModel, path){
+				var _MakeFunctions = function( _methods, viewModel){
 					each( _methods, function(value, key, list){
-						var name = path + '.' + key;
 						if( isArray( value ) ){
 							viewModel[ key ] = [];
 							each( value, function(element, index, array){
@@ -201,7 +205,7 @@
 						else if( isObject(value) ){
 							if( !viewModel[ key ] )
 								viewModel[ key ] = {};
-							innerMakeMethods( value, viewModel[ key ], name );
+							_MakeFunctions( value, viewModel[ key ] );
 						}
 					});
 				};
@@ -212,11 +216,11 @@
 				});
 
 				//ViewModel
-				innerMakeViewModel( _m, _v, self, '');
-				innerMakeComputerModel( _m, self, '');
+				_MakeViewModel( _m, self, _v, self );
+				_MakeComputerModel( _m, self, self );
 
 				//Behaviours
-				innerMakeFunctions( _f, self, '');
+				_MakeFunctions( _f, self );
 
 				if( self.init )
 					self.init();

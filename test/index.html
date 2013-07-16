@@ -33,14 +33,13 @@
 				this.lastName(currentVal.toUpperCase());
 			},
 			init: function(){
-				console.log('Helloka!');
+				console.log('Helloka!', this.lastName());
 			}
 		};
 		obj.validation = {
 			firstName: { required: true, type: "alphanum" },
 			lastName: { notblank: true, type: "alphanum" }
 		};
-
 
 		var viewModel = {};
 		ko.mapObject( viewModel, obj.dataModel, obj.validation, obj.methods, obj.statics );
