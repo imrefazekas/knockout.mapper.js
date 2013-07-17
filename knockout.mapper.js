@@ -136,15 +136,18 @@
 						var validationObj = validation ? validation : {};
 
 						if( isArray( value ) ){
+							viewModel[ key ] = ko.observableArray();
+							if(validationObj[key]) {
+								viewModel[key].extend(
+									(isArray(validationObj[key]) && validationObj[key].length>0) ? validationObj[key][0] : validationObj[key]
+								);
+							}
 							var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
 							if( isAnObject ){
-								viewModel[ key ] = [ {} ];
-								_MakeViewModel( value[0], viewModel[ key ][0], validationObj, context );
+								each( value, function(element, index, array){
+									viewModel[ key ].push( _MakeViewModel(element, {}, {}, context) );
+								} );
 							} else{
-								viewModel[ key ] = ko.observableArray();
-								if(validationObj[key]) {
-									viewModel[key].extend(validationObj[key]);
-								}
 								each( value, function(element, index, array){
 									viewModel[ key ].push( element );
 								} );
@@ -174,7 +177,9 @@
 						if( isArray( value ) ){
 							var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
 							if( isAnObject ){
-								_MakeComputerModel( value[0], viewModel[ key ][0], context );
+								each( value, function(element, index, array){
+									_MakeViewModel(element, {}, context);
+								} );
 							} else{
 							}
 						}
