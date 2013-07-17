@@ -35,6 +35,10 @@
 		var isFunction = function (obj) {
 			return toString.call(obj) == "[object " + Function + "]";
 		};
+		var isDate = function (obj) {
+			return toString.call(obj) == "[object " + Date + "]";
+		};
+
 		if (typeof (/./) !== 'function') {
 			isFunction = function(obj) {
 				return typeof obj === 'function';
@@ -153,7 +157,7 @@
 								} );
 							}
 						}
-						else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
+						else if( isString( value ) || isNumber( value ) || isBoolean( value ) || isDate( value ) ){
 							viewModel[ key ] = ko.observable( value );
 							if(validationObj[key]) {
 								viewModel[key].extend(validationObj[key]);
@@ -183,7 +187,7 @@
 							} else{
 							}
 						}
-						else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
+						else if( isString( value ) || isNumber( value ) || isBoolean( value ) || isDate( value ) ){
 						}
 						else if( isFunction( value ) ){
 							viewModel[ key ] = ko.computed( value, context );
