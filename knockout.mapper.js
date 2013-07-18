@@ -233,6 +233,8 @@
 
 				if( self.init )
 					self.init();
+
+				return self;
 			}(M, V, F, S || {});
 		};
 	}
