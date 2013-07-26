@@ -100,28 +100,29 @@
 			var self = VM;
 			return function(_m){
 				var innerUpdateViewModel = function(data, viewModel, path){
-					each( data, function(value, key, list){
-						var name = path + '.' + key;
-						if( isArray( value ) ){
-							var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
-							if( isAnObject ){
-								var pname = name + '[]';
-								innerUpdateViewModel( value[0], viewModel[ key ][0], pname );
-							} else{
+					if(data && viewModel)
+						each( data, function(value, key, list){
+							var name = path + '.' + key;
+							if( isArray( value ) ){
+								var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
+								if( isAnObject ){
+									var pname = name + '[]';
+									innerUpdateViewModel( value[0], viewModel[ key ][0], pname );
+								} else{
+									if( viewModel[ key ] && isFunction(viewModel[ key ]) )
+										viewModel[ key ]( value );
+								}
+							}
+							else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
 								if( viewModel[ key ] && isFunction(viewModel[ key ]) )
 									viewModel[ key ]( value );
 							}
-						}
-						else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
-							if( viewModel[ key ] && isFunction(viewModel[ key ]) )
-								viewModel[ key ]( value );
-						}
-						else if( isFunction( value ) ){
-						}
-						else if( isObject( value ) ){
-							innerUpdateViewModel( value, viewModel[ key ], name );
-						}
-					} );
+							else if( isFunction( value ) ){
+							}
+							else if( isObject( value ) ){
+								innerUpdateViewModel( value, viewModel[ key ], name );
+							}
+						} );
 
 					return viewModel;
 				};
