@@ -17,6 +17,7 @@
 	function (ko, exports) {
 		var breaker = {};
 		var nativeForEach = Array.prototype.forEach;
+		var toString = Object.prototype.toString;
 		var isArray = Array.isArray || function(obj) {
 			return toString.call(obj) == '[object Array]';
 		};
