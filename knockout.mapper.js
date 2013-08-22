@@ -65,28 +65,30 @@
 			return function(_m){
 				var toInnerJSON = function(obj, dataModel, viewModel){
 					Object.keys(dataModel).forEach( function(key, index, array){
-						var value = dataModel[key];
-						if( isArray( value ) ){
-							if( isFunction( viewModel[key] ) ){
-								obj[ key ] = viewModel[key]();
-							} else if( isArray( viewModel[key] ) ){
-								obj[ key ] = [];
-								viewModel[key].forEach( function(element, _index, _array){
-									if( isFunction( element ) )
-										obj[ key ].push( element() );
-								} );
+						if( viewModel[key] ){
+							var value = dataModel[key];
+							if( isArray( value ) ){
+								if( isFunction( viewModel[key] ) ){
+									obj[ key ] = viewModel[key]();
+								} else if( isArray( viewModel[key] ) ){
+									obj[ key ] = [];
+									viewModel[key].forEach( function(element, _index, _array){
+										if( isFunction( element ) )
+											obj[ key ].push( element() );
+									} );
+								}
 							}
-						}
-						else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
-							if( viewModel[ key ] && isFunction( viewModel[ key ] ) ){
-								obj[ key ] = viewModel[ key ]();
+							else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
+								if( viewModel[ key ] && isFunction( viewModel[ key ] ) ){
+									obj[ key ] = viewModel[ key ]();
+								}
 							}
-						}
-						else if( isFunction( value ) ){
-						}
-						else if( isObject( value ) ){
-							obj[ key ] = {};
-							toInnerJSON( obj[ key ], dataModel[ key ], viewModel[ key ] );
+							else if( isFunction( value ) ){
+							}
+							else if( isObject( value ) ){
+								obj[ key ] = {};
+								toInnerJSON( obj[ key ], dataModel[ key ], viewModel[ key ] );
+							}
 						}
 					});
 					return obj;
@@ -103,25 +105,27 @@
 				var innerUpdateViewModel = function(data, viewModel, path){
 					if(data && viewModel)
 						each( data, function(value, key, list){
-							var name = path + '.' + key;
-							if( isArray( value ) ){
-								var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
-								if( isAnObject ){
-									var pname = name + '[]';
-									innerUpdateViewModel( value[0], viewModel[ key ][0], pname );
-								} else{
+							if( viewModel[ key ] ){
+								var name = path + '.' + key;
+								if( isArray( value ) ){
+									var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
+									if( isAnObject ){
+										var pname = name + '[]';
+										innerUpdateViewModel( value[0], viewModel[ key ][0], pname );
+									} else{
+										if( viewModel[ key ] && isFunction(viewModel[ key ]) )
+											viewModel[ key ]( value );
+									}
+								}
+								else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
 									if( viewModel[ key ] && isFunction(viewModel[ key ]) )
 										viewModel[ key ]( value );
 								}
-							}
-							else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
-								if( viewModel[ key ] && isFunction(viewModel[ key ]) )
-									viewModel[ key ]( value );
-							}
-							else if( isFunction( value ) ){
-							}
-							else if( isObject( value ) ){
-								innerUpdateViewModel( value, viewModel[ key ], name );
+								else if( isFunction( value ) ){
+								}
+								else if( isObject( value ) ){
+									innerUpdateViewModel( value, viewModel[ key ], name );
+								}
 							}
 						} );
 
