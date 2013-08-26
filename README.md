@@ -1,7 +1,7 @@
 #knockout.mapper.js
 
 [Knockout.mapper.js](https://github.com/imrefazekas/knockout.mapper.js) is a very simple plugin for knockout allowing you to:
-- map object to a view model including validation, static fields, computed values and functions
+- map object to a view model including validation, static fields, computed values, functions and custom bindings
 - update a view model's values based on a model prototype
 - exports JSON by a model prototype
 
@@ -15,12 +15,25 @@ var obj = {};
 obj.statics = {
 	"prop": "val"
 };
-// Knockout data model itself
+// Knockout data model itself - including custom bindings
 obj.dataModel = {
 	firstName: "Planet",
 	lastName: "Earth",
 	fullName: function() {
 		return this.firstName() + " " + this.lastName();
+	},
+	name:{
+		read: function () {
+			return this.firstName() + " " + this.lastName();
+		},
+		write: function (value) {
+			var lastSpacePos = value ? value.lastIndexOf(" ") : 0;
+			if (lastSpacePos > 0) { // Ignore values with no space character
+				this.firstName(value.substring(0, lastSpacePos)); // Update "firstName"
+				this.lastName(value.substring(lastSpacePos + 1)); // Update "lastName"
+			}
+		},
+		owner: this
 	}
 };
 // Knockout methods to be added to the model

@@ -103,7 +103,7 @@
 			var self = VM;
 			return function(_m){
 				var innerUpdateViewModel = function(data, viewModel, path){
-					if(data && viewModel)
+					if(data && viewModel)
 						each( data, function(value, key, list){
 							if( viewModel[ key ] ){
 								var name = path + '.' + key;
@@ -172,6 +172,9 @@
 						else if( isFunction( value ) ){
 							//viewModel[ key ] = ko.computed( value, context );
 						}
+						else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
+							//viewModel[ key ] = ko.computed( value, context );
+						}
 						else if( isObject( value ) ){
 							viewModel[ key ] = {};
 
@@ -196,6 +199,9 @@
 						else if( isString( value ) || isNumber( value ) || isBoolean( value ) || isDate( value ) ){
 						}
 						else if( isFunction( value ) ){
+							viewModel[ key ] = ko.computed( value, context );
+						}
+						else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
 							viewModel[ key ] = ko.computed( value, context );
 						}
 						else if( isObject( value ) ){

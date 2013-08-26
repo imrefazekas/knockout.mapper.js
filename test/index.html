@@ -11,7 +11,9 @@
 	<p>First name: <input data-bind="value: firstName" /></p>
 	<p>Last name: <input data-bind="value: lastName" /></p>
 
-	<p>Full name: <strong data-bind="text: fullName"></strong></p>
+	<p>Full name: <strong data-bind="text: name"></strong></p>
+
+	<p>Name: <strong data-bind="text: fullName"></strong></p>
 
 	<button data-bind="click: capitalizeLastName">Go caps</button>
 
@@ -25,6 +27,19 @@
 			lastName: "Earth",
 			fullName: function() {
 				return this.firstName() + " " + this.lastName();
+			},
+			name:{
+				read: function () {
+					return this.firstName() + " " + this.lastName();
+				},
+				write: function (value) {
+					var lastSpacePos = value ? value.lastIndexOf(" ") : 0;
+					if (lastSpacePos > 0) { // Ignore values with no space character
+						this.firstName(value.substring(0, lastSpacePos)); // Update "firstName"
+						this.lastName(value.substring(lastSpacePos + 1)); // Update "lastName"
+					}
+				},
+				owner: this
 			}
 		};
 		obj.methods = {
