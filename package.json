@@ -1,6 +1,6 @@
 {
   "name": "knockout.mapper.js",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Knockout.js plugin for object mapping including validation.",
   "homepage": "https://github.com/imrefazekas/knockout.mapper.js",
   "dependencies": {
@@ -39,5 +39,5 @@
   },
   "readme": "README.md",
   "readmeFilename": "README.md",
-  "_id": "knockout.mapper.js@1.1.1"
+  "_id": "knockout.mapper.js@1.1.2"
 }
