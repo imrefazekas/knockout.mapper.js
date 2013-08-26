@@ -123,6 +123,8 @@
 								}
 								else if( isFunction( value ) ){
 								}
+								else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
+								}
 								else if( isObject( value ) ){
 									innerUpdateViewModel( value, viewModel[ key ], name );
 								}
