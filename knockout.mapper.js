@@ -85,6 +85,11 @@
 							}
 							else if( isFunction( value ) ){
 							}
+							else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
+								if( viewModel[ key ] && isFunction( viewModel[ key ] ) ){
+									obj[ key ] = viewModel[ key ]();
+								}
+							}
 							else if( isObject( value ) ){
 								obj[ key ] = {};
 								toInnerJSON( obj[ key ], dataModel[ key ], viewModel[ key ] );
