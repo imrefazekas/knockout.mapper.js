@@ -1,4 +1,4 @@
-/// Knockout Mapper plugin v0.0.1
+/// Knockout Mapper plugin v1.1.7
 /// (c) 2013 Imre Fazekas
 /// License: MIT (http://www.opensource.org/licenses/mit-license.php)
 (function (factory) {
