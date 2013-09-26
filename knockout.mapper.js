@@ -109,14 +109,16 @@
 						each( data, function(value, key, list){
 							if( viewModel[ key ] ){
 								var name = path + '.' + key;
-								if( isArray( value ) ){
+								if( isArray( value ) && viewModel[ key ] ){
+									viewModel[ key ]().splice( 0, viewModel[ key ]().length );
+
 									var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
 									if( isAnObject ){
-										var pname = name + '[]';
-										innerUpdateViewModel( value[0], viewModel[ key ][0], pname );
-									} else{
-										if( viewModel[ key ] && isFunction(viewModel[ key ]) )
-											viewModel[ key ]( value );
+										each( value, function(element, index, list){
+											viewModel[ key ].push( exports.mapObject({}, element ) );
+										} );
+									} else {
+										viewModel[ key ]( value );
 									}
 								}
 								else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
@@ -147,13 +149,11 @@
 
 				var _MakeViewModel = function(data, viewModel, validation, context){
 					each( data, function(value, key, list){
-						var validationObj = validation ? validation : {};
-
 						if( isArray( value ) ){
 							viewModel[ key ] = ko.observableArray();
-							if(validationObj[key]) {
+							if(validation[key]) {
 								viewModel[key].extend(
-									(isArray(validationObj[key]) && validationObj[key].length>0) ? validationObj[key][0] : validationObj[key]
+									(isArray(validation[key]) && validation[key].length>0) ? validation[key][0] : validation[key]
 								);
 							}
 							var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
@@ -169,8 +169,8 @@
 						}
 						else if( isString( value ) || isNumber( value ) || isBoolean( value ) || isDate( value ) ){
 							viewModel[ key ] = ko.observable( value );
-							if(validationObj[key]) {
-								viewModel[key].extend(validationObj[key]);
+							if(validation[key]) {
+								viewModel[key].extend(validation[key]);
 							}
 						}
 						else if( isFunction( value ) ){
@@ -182,7 +182,7 @@
 						else if( isObject( value ) ){
 							viewModel[ key ] = {};
 
-							_MakeViewModel( value, viewModel[ key ], validationObj[key], context );
+							_MakeViewModel( value, viewModel[ key ], validation[key], context );
 						}
 					} );
 
@@ -251,7 +251,7 @@
 					self.init();
 
 				return self;
-			}(M, V, F, S || {});
+			}(M, V  || {}, F  || {}, S || {});
 		};
 	}
 ));

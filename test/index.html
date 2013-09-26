@@ -25,6 +25,8 @@
 		obj.dataModel = {
 			firstName: "Planet",
 			lastName: "Earth",
+			friends: [ "Saturn", "Moon"],
+			environment: [ ],
 			fullName: function() {
 				return this.firstName() + " " + this.lastName();
 			},
@@ -62,10 +64,11 @@
 
 		setTimeout( function(){
 			obj.dataModel.firstName = "Universe";
+			obj.dataModel.environment = [ {name:"Sun", distance:150}, {name:"Neptun", distance:4.5} ];
 			ko.updateViewModel( viewModel, obj.dataModel );
 
 			console.log( ko.toJSONByPrototype( viewModel, obj.dataModel ) );
-		}, 5000 );
+		}, 3000 );
 	</script>
 </body>
 </html>
