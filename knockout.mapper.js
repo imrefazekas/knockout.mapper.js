@@ -147,7 +147,8 @@
 
 			return function(_m, _v, _f, _s){
 
-				var _MakeViewModel = function(data, viewModel, validation, context){
+				var _MakeViewModel = function(data, viewModel, validationRules, context){
+					var validation = validationRules || {};
 					each( data, function(value, key, list){
 						if( isArray( value ) ){
 							viewModel[ key ] = ko.observableArray();
