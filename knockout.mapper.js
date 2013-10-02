@@ -76,7 +76,9 @@
 										obj[ key ].push( toInnerJSON( {}, value[0], element) );
 									} );
 								} else {
-									obj[ key ] = marray;
+									each( marray, function(element, ind, list){
+										obj[ key ].push( isFunction( element ) ? element() : element );
+									} );
 								}
 							}
 							else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
