@@ -68,14 +68,15 @@
 						if( viewModel[key] ){
 							var value = dataModel[key];
 							if( isArray( value ) ){
-								if( isFunction( viewModel[key] ) ){
-									obj[ key ] = viewModel[key]();
-								} else if( isArray( viewModel[key] ) ){
+								var marray = viewModel[key]();
+								var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
+								if( isAnObject ){
 									obj[ key ] = [];
-									viewModel[key].forEach( function(element, _index, _array){
-										if( isFunction( element ) )
-											obj[ key ].push( element() );
+									each( marray, function(element, ind, list){
+										obj[ key ].push( toInnerJSON( {}, value[0], element) );
 									} );
+								} else {
+									obj[ key ] = marray;
 								}
 							}
 							else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
@@ -110,7 +111,7 @@
 							if( viewModel[ key ] ){
 								var name = path + '.' + key;
 								if( isArray( value ) && viewModel[ key ] ){
-									viewModel[ key ]().splice( 0, viewModel[ key ]().length );
+									viewModel[ key ]([]);
 
 									var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
 									if( isAnObject ){
