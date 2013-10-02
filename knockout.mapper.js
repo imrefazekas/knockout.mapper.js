@@ -68,10 +68,10 @@
 						if( viewModel[key] ){
 							var value = dataModel[key];
 							if( isArray( value ) ){
+								obj[ key ] = [];
 								var marray = viewModel[key]();
 								var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
 								if( isAnObject ){
-									obj[ key ] = [];
 									each( marray, function(element, ind, list){
 										obj[ key ].push( toInnerJSON( {}, value[0], element) );
 									} );
