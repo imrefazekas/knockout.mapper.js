@@ -70,15 +70,19 @@
 							if( isArray( value ) ){
 								obj[ key ] = [];
 								var marray = viewModel[key]();
-								var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
-								if( isAnObject ){
-									each( marray, function(element, ind, list){
-										obj[ key ].push( toInnerJSON( {}, value[0], element) );
-									} );
-								} else {
-									each( marray, function(element, ind, list){
-										obj[ key ].push( isFunction( element ) ? element() : element );
-									} );
+								if( isArray( viewModel[key] ) )
+									obj[ key ] = viewModel[key];
+								else{
+									var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
+									if( isAnObject ){
+										each( marray, function(element, ind, list){
+											obj[ key ].push( toInnerJSON( {}, value[0], element) );
+										} );
+									} else {
+										each( marray, function(element, ind, list){
+											obj[ key ].push( isFunction( element ) ? element() : element );
+										} );
+									}
 								}
 							}
 							else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
