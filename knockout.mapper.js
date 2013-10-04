@@ -92,7 +92,7 @@
 							}
 							else if( isObject( value ) ){
 								obj[ key ] = {};
-								toInnerJSON( obj[ key ], dataModel[ key ], viewModel[ key ] );
+								toInnerJSON( obj[ key ], value, value._observable ? viewModel[ key ]() : viewModel[ key ] );
 							}
 						}
 					});
