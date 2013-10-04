@@ -86,9 +86,7 @@
 								}
 							}
 							else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
-								if( viewModel[ key ] && isFunction( viewModel[ key ] ) ){
-									obj[ key ] = viewModel[ key ]();
-								}
+								obj[ key ] = isFunction( viewModel[ key ] ) ? viewModel[ key ]() : viewModel[ key ];
 							}
 							else if( isFunction( value ) ){
 							}
