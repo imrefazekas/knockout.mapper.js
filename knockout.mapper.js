@@ -184,7 +184,7 @@
 							//viewModel[ key ] = ko.computed( value, context );
 						}
 						else if( isObject( value ) ){
-							viewModel[ key ] = {};
+							viewModel[ key ] = value.__observable ? ko.observable() : {};
 
 							_MakeViewModel( value, viewModel[ key ], validation[key], context );
 						}
