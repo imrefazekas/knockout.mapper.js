@@ -69,10 +69,10 @@
 							var value = dataModel[key];
 							if( isArray( value ) ){
 								obj[ key ] = [];
-								var marray = viewModel[key]();
 								if( isArray( viewModel[key] ) )
 									obj[ key ] = viewModel[key];
 								else{
+									var marray = viewModel[key]();
 									var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
 									if( isAnObject ){
 										each( marray, function(element, ind, list){
