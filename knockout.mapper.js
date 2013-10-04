@@ -153,6 +153,8 @@
 				var _MakeViewModel = function(data, viewModel, validationRules, context){
 					var validation = validationRules || {};
 					each( data, function(value, key, list){
+						if(key === '_observable') return;
+
 						if( isArray( value ) ){
 							viewModel[ key ] = ko.observableArray();
 							if(validation[key]) {
@@ -184,7 +186,7 @@
 							//viewModel[ key ] = ko.computed( value, context );
 						}
 						else if( isObject( value ) ){
-							viewModel[ key ] = value.__observable ? ko.observable() : {};
+							viewModel[ key ] = value._observable ? ko.observable() : {};
 
 							_MakeViewModel( value, viewModel[ key ], validation[key], context );
 						}
