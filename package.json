@@ -1,6 +1,6 @@
 {
   "name": "knockout.mapper.js",
-  "version": "1.2.11",
+  "version": "1.2.12",
   "description": "Knockout.js plugin for object mapping including validation.",
   "homepage": "https://github.com/imrefazekas/knockout.mapper.js",
   "dependencies": {
@@ -34,8 +34,8 @@
   "scripts": {},
   "devDependencies": {
     "grunt": "~0.4",
-    "grunt-contrib-jshint": "~0.8",
-    "grunt-contrib-uglify": "~0.2"
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-uglify": "latest"
   },
-  "_id": "knockout.mapper.js@1.2.11"
+  "_id": "knockout.mapper.js@1.2.12"
 }
