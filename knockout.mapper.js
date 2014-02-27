@@ -224,21 +224,21 @@
 					return viewModel;
 				};
 
-				var _MakeFunctions = function( _methods, viewModel){
+				var _MakeFunctions = function( _methods, viewModel, context){
 					each( _methods, function(value, key, list){
 						if( isArray( value ) ){
 							viewModel[ key ] = [];
 							each( value, function(element, index, array){
-								viewModel[ key ].push( element );
+								viewModel[ key ].push( isFunction(element) ? element.bind( context ) : element );
 							} );
 						}
 						else if( isFunction(value) ){
-							viewModel[ key ] = value;
+							viewModel[ key ] = value.bind( context );
 						}
 						else if( isObject(value) ){
 							if( !viewModel[ key ] )
 								viewModel[ key ] = {};
-							_MakeFunctions( value, viewModel[ key ] );
+							_MakeFunctions( value, viewModel[ key ], context );
 						}
 					});
 				};
@@ -253,7 +253,7 @@
 				_MakeComputerModel( _m, self, self );
 
 				//Behaviours
-				_MakeFunctions( _f, self );
+				_MakeFunctions( _f, self, self );
 
 				if( self.init )
 					self.init();
