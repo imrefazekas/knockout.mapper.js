@@ -1,5 +1,5 @@
-/// Knockout Mapper plugin v1.1.7
-/// (c) 2013 Imre Fazekas
+/// Knockout Mapper plugin
+/// (c) 2014 Imre Fazekas
 /// License: MIT (http://www.opensource.org/licenses/mit-license.php)
 (function (factory) {
 	// Module systems magic dance.
@@ -19,25 +19,25 @@
 		var nativeForEach = Array.prototype.forEach;
 		var toString = Object.prototype.toString;
 		var isArray = Array.isArray || function(obj) {
-			return toString.call(obj) == '[object Array]';
+			return toString.call(obj) === '[object Array]';
 		};
 		var isString = function (obj) {
-			return "[object String]" == toString.call(obj);
+			return "[object String]" === toString.call(obj);
 		};
 		var isObject = function (obj) {
 			return obj === Object(obj);
 		};
 		var isBoolean = function(obj) {
-			return obj === true || obj === false || toString.call(obj) == '[object Boolean]';
+			return obj === true || obj === false || toString.call(obj) === '[object Boolean]';
 		};
 		var isNumber = function (obj) {
-			return (toString.call(obj) == "[object " + Number + "]") || !isNaN(obj);
+			return (toString.call(obj) === "[object " + Number + "]") || !isNaN(obj);
 		};
 		var isFunction = function (obj) {
-			return toString.call(obj) == "[object " + Function + "]";
+			return toString.call(obj) === "[object " + Function + "]";
 		};
 		var isDate = function (obj) {
-			return toString.call(obj) == "[object " + Date + "]";
+			return toString.call(obj) === "[object " + Date + "]";
 		};
 
 		if (typeof (/./) !== 'function') {
@@ -50,7 +50,7 @@
 			if (nativeForEach && obj.forEach === nativeForEach) {
 				obj.forEach(iterator, context);
 			} else if ( isArray(obj) ) {
-				for (var i = 0, l = obj.length; i < l; i++) {
+				for (var i = 0, l = obj.length; i < l; i+=1) {
 					if (iterator.call(context, obj[i], i, obj) === breaker) return;
 				}
 			} else {
@@ -211,10 +211,10 @@
 						else if( isString( value ) || isNumber( value ) || isBoolean( value ) || isDate( value ) ){
 						}
 						else if( isFunction( value ) ){
-							viewModel[ key ] = ko.computed( value, context );
+							viewModel[ key ] = ko.pureComputed( value, context );
 						}
 						else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
-							viewModel[ key ] = ko.computed( value, context );
+							viewModel[ key ] = ko.pureComputed( value, context );
 						}
 						else if( isObject( value ) ){
 							_MakeComputerModel( value, viewModel[ key ], context );
