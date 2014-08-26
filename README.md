@@ -11,7 +11,7 @@ License: [MIT](http://www.opensource.org/licenses/mit-license.php)
 ```javascript
 // Let's have a model prototype. (could have been received from server-side or define any way you want to...)
 var obj = {};
-// Knockout static properties 
+// Knockout static properties
 obj.statics = {
 	"prop": "val"
 };
@@ -46,7 +46,7 @@ obj.methods = {
 		console.log('Helloka!');
 	}
 };
-// validation rules defined 
+// validation rules defined
 obj.validation = {
 	firstName: { required: true, type: "alphanum" },
 	lastName: { notblank: true, type: "alphanum" }
@@ -67,6 +67,3 @@ ko.updateViewModel( viewModel, obj.dataModel );
 // print out the JSON containing only the fields possessed by the prototype passed by. Much faster, than the toJSON of knockout and can be targeted only content you are really interested in
 console.log( ko.toJSONByPrototype( viewModel, obj.dataModel ) );
 ```
-
-
-For a more complex scenario please find a complex project boilerplate: [Division.js](https://github.com/imrefazekas/division.js), where one business model is defined and maintained allowing you to use the same objects - including model and validation and computed values and associated functions - on both client side, server side and DB interaction!
