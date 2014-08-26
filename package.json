@@ -1,6 +1,6 @@
 {
   "name": "knockout.mapper.js",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Knockout.js plugin for object mapping including validation.",
   "homepage": "https://github.com/imrefazekas/knockout.mapper.js",
   "dependencies": {
@@ -22,7 +22,7 @@
   },
   "author": {
     "name": "Imre Fazekas",
-    "email": "mail@imrefazekas.me"
+    "email": "imre.fazekas@icloud.com"
   },
   "licenses": [
     {
@@ -39,5 +39,5 @@
     "gulp-rename": "latest",
     "gulp-uglify": "latest"
   },
-  "_id": "knockout.mapper.js@1.4.0"
+  "_id": "knockout.mapper.js@1.4.1"
 }
