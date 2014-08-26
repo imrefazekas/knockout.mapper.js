@@ -1,9 +1,9 @@
 var gulp = global.gulp = require('gulp'),
-	plugins = global.plugins = require("gulp-load-plugins")( { scope: ['devDependencies'] } );;
+	plugins = global.plugins = require("gulp-load-plugins")( { scope: ['devDependencies'] } );
 
 gulp.task( 'jshint', function(callback) {
 	return gulp.src( 'knockout.mapper.js' )
-		.pipe( global.plugins.jshint() )
+		.pipe( global.plugins.jshint( { "predef": [ "define", "ko" ] } ) )
 		.pipe( global.plugins.jshint.reporter('default' ));
 } );
 
