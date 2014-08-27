@@ -62,204 +62,229 @@
 
 		exports.toJSONByPrototype = ko.toJSONByPrototype = function(VM, M){
 			var self = VM;
-			return function(_m){
-				var toInnerJSON = function(obj, dataModel, viewModel){
-					Object.keys(dataModel).forEach( function(key, index, array){
-						if( viewModel[key] ){
-							var value = dataModel[key];
-							if( isArray( value ) ){
-								obj[ key ] = [];
-								if( isArray( viewModel[key] ) )
-									obj[ key ] = viewModel[key];
-								else{
-									var marray = viewModel[key]();
-									var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
-									if( isAnObject ){
-										each( marray, function(element, ind, list){
-											obj[ key ].push( toInnerJSON( {}, value[0], element) );
-										} );
-									} else {
-										each( marray, function(element, ind, list){
-											obj[ key ].push( isFunction( element ) ? element() : element );
-										} );
-									}
+			var toInnerJSON = function(obj, dataModel, viewModel){
+				Object.keys(dataModel).forEach( function(key, index, array){
+					if( viewModel[key] ){
+						var value = dataModel[key];
+						if( isArray( value ) ){
+							obj[ key ] = [];
+							if( isArray( viewModel[key] ) )
+								obj[ key ] = viewModel[key];
+							else{
+								var marray = viewModel[key]();
+								var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
+								if( isAnObject ){
+									each( marray, function(element, ind, list){
+										obj[ key ].push( toInnerJSON( {}, value[0], element) );
+									} );
+								} else {
+									each( marray, function(element, ind, list){
+										obj[ key ].push( isFunction( element ) ? element() : element );
+									} );
 								}
 							}
-							else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
-								obj[ key ] = isFunction( viewModel[ key ] ) ? viewModel[ key ]() : viewModel[ key ];
-							}
-							else if( isFunction( value ) ){
-							}
-							else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
-							}
-							else if( isObject( value ) ){
-								obj[ key ] = {};
-								toInnerJSON( obj[ key ], value, value._observable ? viewModel[ key ]() : viewModel[ key ] );
-							}
 						}
-					});
-					return obj;
-				};
+						else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
+							obj[ key ] = isFunction( viewModel[ key ] ) ? viewModel[ key ]() : viewModel[ key ];
+						}
+						else if( isFunction( value ) ){
+							return;
+						}
+						else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
+							return;
+						}
+						else if( isObject( value ) ){
+							obj[ key ] = {};
+							toInnerJSON( obj[ key ], value, value._observable ? viewModel[ key ]() : viewModel[ key ] );
+						}
+					}
+				});
+				return obj;
+			};
 
-				return toInnerJSON( {}, _m, self );
-			}(M);
+			return toInnerJSON( {}, M, self );
+		};
+
+		exports.resetViewModel = ko.resetViewModel = function(VM){
+			var self = VM;
+			var innerResetViewModel = function(viewModel){
+				if( !viewModel ) return;
+
+				if( isFunction(viewModel) ){
+					if( viewModel.originalValue )
+						viewModel( viewModel.originalValue() );
+				} else if( isObject(viewModel) ){
+					each( viewModel, function(value, key, list){
+						innerResetViewModel( viewModel[ key ] );
+					});
+				}
+				return viewModel;
+			};
+
+			innerResetViewModel( self );
 		};
 
 		// pass the viewmodel to build up, the reference data model, validation definions, functions and static data
 		exports.updateViewModel = ko.updateViewModel = function(VM, M){
 			var self = VM;
-			return function(_m){
-				var innerUpdateViewModel = function(data, viewModel, path){
-					if(data && viewModel)
-						each( data, function(value, key, list){
-							if( viewModel[ key ] ){
-								var name = path + '.' + key;
-								if( isArray( value ) && viewModel[ key ] ){
-									viewModel[ key ]([]);
+			var innerUpdateViewModel = function(data, viewModel, path){
+				if(data && viewModel)
+					each( data, function(value, key, list){
+						if( viewModel[ key ] ){
+							var name = path + '.' + key;
+							if( isArray( value ) && viewModel[ key ] ){
+								viewModel[ key ]([]);
 
-									var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
-									if( isAnObject ){
-										each( value, function(element, index, list){
-											viewModel[ key ].push( exports.mapObject({}, element ) );
-										} );
-									} else {
-										viewModel[ key ]( value );
-									}
-								}
-								else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
-									if( viewModel[ key ] && isFunction(viewModel[ key ]) )
-										viewModel[ key ]( value );
-								}
-								else if( isFunction( value ) ){
-								}
-								else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
-								}
-								else if( isObject( value ) ){
-									innerUpdateViewModel( value, viewModel[ key ], name );
+								var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
+								if( isAnObject ){
+									each( value, function(element, index, list){
+										viewModel[ key ].push( exports.mapObject({}, element ) );
+									} );
+								} else {
+									viewModel[ key ]( value );
 								}
 							}
-						} );
+							else if( isString( value ) || isNumber( value ) || isBoolean( value ) ){
+								if( viewModel[ key ] && isFunction(viewModel[ key ]) )
+									viewModel[ key ]( value );
+							}
+							else if( isFunction( value ) ){
+								return;
+							}
+							else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
+								return;
+							}
+							else if( isObject( value ) ){
+								innerUpdateViewModel( value, viewModel[ key ], name );
+							}
+						}
+					} );
 
-					return viewModel;
-				};
+				return viewModel;
+			};
 
-				innerUpdateViewModel( _m, self, '');
-			}(M);
+			innerUpdateViewModel( M, self, '');
 		};
 
+		ko.extenders.originalValue = function (observable, value) {
+			if(!observable.originalValue) {
+				observable.originalValue = ko.observable( value );
+			}
+		};
 		exports.mapObject = ko.mapObject = function(VM, M, V, F, S){
 			var self = VM;
+			var _m = M, _v = V  || {}, _f = F  || {}, _s = S || {};
 
-			return function(_m, _v, _f, _s){
+			var _MakeViewModel = function(data, viewModel, validationRules, context){
+				var validation = validationRules || {};
+				each( data, function(value, key, list){
+					if(key === '_observable') return;
 
-				var _MakeViewModel = function(data, viewModel, validationRules, context){
-					var validation = validationRules || {};
-					each( data, function(value, key, list){
-						if(key === '_observable') return;
-
-						if( isArray( value ) ){
-							viewModel[ key ] = ko.observableArray();
-							if(validation[key]) {
-								viewModel[key].extend(
-									(isArray(validation[key]) && validation[key].length>0) ? validation[key][0] : validation[key]
-								);
-							}
-							var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
-							if( isAnObject ){
-								each( value, function(element, index, array){
-									viewModel[ key ].push( _MakeViewModel(element, {}, {}, context) );
-								} );
-							} else{
-								each( value, function(element, index, array){
-									viewModel[ key ].push( element );
-								} );
-							}
+					if( isArray( value ) ){
+						viewModel[ key ] = ko.observableArray();
+						if(validation[key]) {
+							viewModel[key].extend(
+								(isArray(validation[key]) && validation[key].length>0) ? validation[key][0] : validation[key]
+							);
 						}
-						else if( isString( value ) || isNumber( value ) || isBoolean( value ) || isDate( value ) ){
-							viewModel[ key ] = ko.observable( value );
-							if(validation[key]) {
-								viewModel[key].extend(validation[key]);
-							}
-						}
-						else if( isFunction( value ) ){
-							//viewModel[ key ] = ko.computed( value, context );
-						}
-						else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
-							//viewModel[ key ] = ko.computed( value, context );
-						}
-						else if( isObject( value ) ){
-							viewModel[ key ] = value._observable ? ko.observable() : {};
-
-							_MakeViewModel( value, viewModel[ key ], validation[key], context );
-						}
-					} );
-
-					return viewModel;
-				};
-
-				var _MakeComputerModel = function(data, viewModel, context){
-					each( data, function(value, key, list){
-						if( isArray( value ) ){
-							var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
-							if( isAnObject ){
-								each( value, function(element, index, array){
-									_MakeViewModel(element, {}, context);
-								} );
-							} else{
-							}
-						}
-						else if( isString( value ) || isNumber( value ) || isBoolean( value ) || isDate( value ) ){
-						}
-						else if( isFunction( value ) ){
-							viewModel[ key ] = ko.pureComputed( value, context );
-						}
-						else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
-							viewModel[ key ] = ko.pureComputed( value, context );
-						}
-						else if( isObject( value ) ){
-							_MakeComputerModel( value, viewModel[ key ], context );
-						}
-					} );
-
-					return viewModel;
-				};
-
-				var _MakeFunctions = function( _methods, viewModel, context){
-					each( _methods, function(value, key, list){
-						if( isArray( value ) ){
-							viewModel[ key ] = [];
+						var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
+						if( isAnObject ){
 							each( value, function(element, index, array){
-								viewModel[ key ].push( isFunction(element) ? element.bind( context ) : element );
+								viewModel[ key ].push( _MakeViewModel(element, {}, {}, context) );
+							} );
+						} else{
+							each( value, function(element, index, array){
+								viewModel[ key ].push( element );
 							} );
 						}
-						else if( isFunction(value) ){
-							viewModel[ key ] = value.bind( context );
+					}
+					else if( isString( value ) || isNumber( value ) || isBoolean( value ) || isDate( value ) ){
+						console.log( key );
+						viewModel[ key ] = ko.observable( value ).extend( { originalValue: value } );
+						if(validation[key]) {
+							viewModel[key].extend(validation[key]);
 						}
-						else if( isObject(value) ){
-							if( !viewModel[ key ] )
-								viewModel[ key ] = {};
-							_MakeFunctions( value, viewModel[ key ], context );
-						}
-					});
-				};
+					}
+					else if( isFunction( value ) ){
+						//viewModel[ key ] = ko.computed( value, context );
+						return;
+					}
+					else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
+						//viewModel[ key ] = ko.computed( value, context );
+						return;
+					}
+					else if( isObject( value ) ){
+						viewModel[ key ] = value._observable ? ko.observable() : {};
 
-				//Statics
-				each( _s, function(value, key, list){
-					self[key] = value;
+						_MakeViewModel( value, viewModel[ key ], validation[key], context );
+					}
+				} );
+
+				return viewModel;
+			};
+
+			var _MakeComputerModel = function(data, viewModel, context){
+				each( data, function(value, key, list){
+					if( isArray( value ) ){
+						var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
+						if( isAnObject ){
+							each( value, function(element, index, array){
+								_MakeViewModel(element, {}, context);
+							} );
+						}
+					}
+					else if( isString( value ) || isNumber( value ) || isBoolean( value ) || isDate( value ) ){
+						return;
+					}
+					else if( isFunction( value ) ){
+						viewModel[ key ] = ko.pureComputed( value, context );
+					}
+					else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
+						viewModel[ key ] = ko.pureComputed( value, context );
+					}
+					else if( isObject( value ) ){
+						_MakeComputerModel( value, viewModel[ key ], context );
+					}
+				} );
+
+				return viewModel;
+			};
+
+			var _MakeFunctions = function( _methods, viewModel, context){
+				each( _methods, function(value, key, list){
+					if( isArray( value ) ){
+						viewModel[ key ] = [];
+						each( value, function(element, index, array){
+							viewModel[ key ].push( isFunction(element) ? element.bind( context ) : element );
+						} );
+					}
+					else if( isFunction(value) ){
+						viewModel[ key ] = value.bind( context );
+					}
+					else if( isObject(value) ){
+						if( !viewModel[ key ] )
+							viewModel[ key ] = {};
+						_MakeFunctions( value, viewModel[ key ], context );
+					}
 				});
+			};
 
-				//ViewModel
-				_MakeViewModel( _m, self, _v, self );
-				_MakeComputerModel( _m, self, self );
+			//Statics
+			each( _s, function(value, key, list){
+				self[key] = value;
+			});
 
-				//Behaviours
-				_MakeFunctions( _f, self, self );
+			//ViewModel
+			_MakeViewModel( _m, self, _v, self );
+			_MakeComputerModel( _m, self, self );
 
-				if( self.init )
-					self.init();
+			//Behaviours
+			_MakeFunctions( _f, self, self );
 
-				return self;
-			}(M, V  || {}, F  || {}, S || {});
+			if( self.init )
+				self.init();
+
+			return self;
 		};
 	}
 ));

@@ -69,6 +69,10 @@
 
 			console.log( ko.toJSONByPrototype( viewModel, obj.dataModel ) );
 		}, 3000 );
+
+		setTimeout( function(){
+			ko.resetViewModel( viewModel );
+		}, 6000 );
 	</script>
 </body>
 </html>

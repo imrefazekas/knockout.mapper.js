@@ -3,6 +3,7 @@
 [Knockout.mapper.js](https://github.com/imrefazekas/knockout.mapper.js) is a very simple plugin for knockout allowing you to:
 - map object to a view model including validation, static fields, computed values, functions and custom bindings
 - update a view model's values based on a model prototype
+- can reset observables to the initial values they have been created by
 - exports JSON by a model prototype
 
 License: [MIT](http://www.opensource.org/licenses/mit-license.php)
@@ -63,6 +64,9 @@ ko.applyBindings( viewModel );
 obj.dataModel.firstName = "Universe";
 // updating the viewmodel based on some changes might received from server-side
 ko.updateViewModel( viewModel, obj.dataModel );
+
+// resets the firstName and lastName to the initial values "Planet" and "Earth"
+ko.resetViewModel( viewModel );
 
 // print out the JSON containing only the fields possessed by the prototype passed by. Much faster, than the toJSON of knockout and can be targeted only content you are really interested in
 console.log( ko.toJSONByPrototype( viewModel, obj.dataModel ) );
