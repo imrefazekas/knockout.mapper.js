@@ -199,7 +199,6 @@
 						}
 					}
 					else if( isString( value ) || isNumber( value ) || isBoolean( value ) || isDate( value ) ){
-						console.log( key );
 						viewModel[ key ] = ko.observable( value ).extend( { originalValue: value } );
 						if(validation[key]) {
 							viewModel[key].extend(validation[key]);
