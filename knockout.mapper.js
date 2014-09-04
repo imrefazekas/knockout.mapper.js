@@ -172,7 +172,7 @@
 			}
 		};
 		function extend( model, validation ){
-			model.extend( isFunction(validation) ? { fn: validation, priority: 256 } : validation );
+			model.extend( isFunction(validation) ? { fn: validation } : validation );
 		}
 		exports.mapObject = ko.mapObject = function(VM, M, V, F, S){
 			var self = VM;
