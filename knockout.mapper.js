@@ -171,6 +171,9 @@
 				observable.originalValue = ko.observable( value );
 			}
 		};
+		function extend( model, validation ){
+			model.extend( isFunction(validation) ? { fn: validation, priority: 256 } : validation );
+		}
 		exports.mapObject = ko.mapObject = function(VM, M, V, F, S){
 			var self = VM;
 			var _m = M, _v = V  || {}, _f = F  || {}, _s = S || {};
@@ -183,9 +186,7 @@
 					if( isArray( value ) ){
 						viewModel[ key ] = ko.observableArray();
 						if(validation[key]) {
-							viewModel[key].extend(
-								(isArray(validation[key]) && validation[key].length>0) ? validation[key][0] : validation[key]
-							);
+							extend( viewModel[key], (isArray(validation[key]) && validation[key].length>0) ? validation[key][0] : validation[key] );
 						}
 						var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
 						if( isAnObject ){
@@ -201,7 +202,7 @@
 					else if( isString( value ) || isNumber( value ) || isBoolean( value ) || isDate( value ) ){
 						viewModel[ key ] = ko.observable( value ).extend( { originalValue: value } );
 						if(validation[key]) {
-							viewModel[key].extend(validation[key]);
+							extend( viewModel[key], validation[key] );
 						}
 					}
 					else if( isFunction( value ) ){
