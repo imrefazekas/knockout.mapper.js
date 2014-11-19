@@ -155,7 +155,10 @@
 								return;
 							}
 							else if( isObject( value ) ){
-								innerUpdateViewModel( value, viewModel[ key ], name );
+								if( isFunction( viewModel[ key ] ) )
+									viewModel[ key ]( value );
+								else
+									innerUpdateViewModel( value, viewModel[ key ], name );
 							}
 						}
 					} );
