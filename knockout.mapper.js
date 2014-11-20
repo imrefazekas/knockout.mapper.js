@@ -64,7 +64,7 @@
 			var self = VM;
 			var toInnerJSON = function(obj, dataModel, viewModel){
 				Object.keys(dataModel).forEach( function(key, index, array){
-					if( viewModel[key] ){
+					if( viewModel && viewModel[key] ){
 						var value = dataModel[key];
 						if( isArray( value ) ){
 							obj[ key ] = [];
