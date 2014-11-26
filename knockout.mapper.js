@@ -214,9 +214,6 @@
 					}
 					else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
 						//viewModel[ key ] = ko.computed( value, context );
-						if( validation[key] ) {
-							extend( viewModel[key], validation[key] );
-						}
 						return;
 					}
 					else if( isObject( value ) ){
@@ -229,7 +226,8 @@
 				return viewModel;
 			};
 
-			var _MakeComputerModel = function(data, viewModel, context){
+			var _MakeComputerModel = function(data, viewModel, validationRules, context){
+				var validation = validationRules || {};
 				each( data, function(value, key, list){
 					if( isArray( value ) ){
 						var isAnObject = value.length > 0 && value[0] && isObject( value[0] );
@@ -247,9 +245,12 @@
 					}
 					else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
 						viewModel[ key ] = ko.pureComputed( value, context );
+						if( validation[key] ) {
+							extend( viewModel[key], validation[key] );
+						}
 					}
 					else if( isObject( value ) ){
-						_MakeComputerModel( value, viewModel[ key ], context );
+						_MakeComputerModel( value, viewModel[ key ], validation[key], context );
 					}
 				} );
 
@@ -282,7 +283,7 @@
 
 			//ViewModel
 			_MakeViewModel( _m, self, _v, self );
-			_MakeComputerModel( _m, self, self );
+			_MakeComputerModel( _m, self, _v, self );
 
 			//Behaviours
 			_MakeFunctions( _f, self, self );
