@@ -214,6 +214,9 @@
 					}
 					else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
 						//viewModel[ key ] = ko.computed( value, context );
+						if( validation[key] ) {
+							extend( viewModel[key], validation[key] );
+						}
 						return;
 					}
 					else if( isObject( value ) ){
