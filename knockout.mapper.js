@@ -177,9 +177,11 @@
 		function extend( model, validation ){
 			model.extend( isFunction(validation) ? { fn: validation } : validation );
 		}
-		exports.mapObject = ko.mapObject = function(VM, M, V, F, S){
+		exports.mapObject = ko.mapObject = function(VM, M, V, F, S, options){
 			var self = VM;
 			var _m = M, _v = V  || {}, _f = F  || {}, _s = S || {};
+
+			var mappingOptions = options || {};
 
 			var _MakeViewModel = function(data, viewModel, validationRules, context){
 				var validation = validationRules || {};
@@ -245,7 +247,7 @@
 					}
 					else if( isObject( value ) && isFunction( value.read ) && isFunction( value.write ) ){
 						viewModel[ key ] = ko.pureComputed( value, context );
-						if( validation[key] ) {
+						if( validation[key] && mappingOptions.validateReadWrite ) {
 							extend( viewModel[key], validation[key] );
 						}
 					}
