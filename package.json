@@ -24,12 +24,7 @@
     "name": "Imre Fazekas",
     "email": "imre.fazekas@icloud.com"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://www.opensource.org/licenses/MIT"
-    }
-  ],
+  "license": "MIT",
   "main": "knockout.mapper.js",
   "scripts": {},
   "devDependencies": {
